@@ -637,8 +637,8 @@
 
     .twibbon-canvas-wrap {
       width: 100%;
-      max-width: 640px;
-      aspect-ratio: 1 / 1;
+      max-width: 520px;
+      aspect-ratio: 4 / 5;
       margin: 0 auto;
       overflow: hidden;
       background: rgba(255, 252, 229, 0.95);
@@ -906,6 +906,7 @@
 
       .twibbon-canvas-wrap {
         border-width: 6px;
+        max-width: 360px;
       }
     }
 
@@ -943,7 +944,6 @@
 
 <body>
   <!-- MUSIC -->
-  <!-- Ganti src di bawah ini dengan link musik kamu. Contoh: ./music.mp3 atau https://domain.com/music.mp3 -->
   <audio id="bgMusic" src="https://raw.githubusercontent.com/starbvoi/scoopoacoba/a0b02ac9d44e69c05f63d8f286d41a6e36f5dcd7/AiScReam_-_Ai_Scream.mp3" loop preload="auto"></audio>
 
   <!-- LOADER -->
@@ -955,23 +955,13 @@
       <div class="pour middle"></div>
       <div class="pour top"></div>
 
-      <div class="scoop top">
-        <div class="fill"></div>
-      </div>
-
-      <div class="scoop middle">
-        <div class="fill"></div>
-      </div>
-
-      <div class="scoop bottom">
-        <div class="fill"></div>
-      </div>
+      <div class="scoop top"><div class="fill"></div></div>
+      <div class="scoop middle"><div class="fill"></div></div>
+      <div class="scoop bottom"><div class="fill"></div></div>
 
       <div class="cone"></div>
 
-      <div class="loading-text">
-        Loading<span class="loading-dots"></span>
-      </div>
+      <div class="loading-text">Loading<span class="loading-dots"></span></div>
     </div>
   </div>
 
@@ -979,10 +969,7 @@
   <main class="site" id="siteContent">
     <section class="landing-wrap">
       <div class="logo-box">
-        <img
-          src="https://i.ibb.co.com/KpG45xBD/LOGO-1.png"
-          alt="Scoop Teraphie Logo"
-        />
+        <img src="https://i.ibb.co.com/KpG45xBD/LOGO-1.png" alt="Scoop Teraphie Logo" />
       </div>
 
       <p class="tagline">
@@ -996,9 +983,7 @@
 
   <!-- QUIZ -->
   <main class="quiz-page" id="quizPage">
-    <h1 class="title">
-      What Ice Cream Flavor Matches Your Personality?<br>
-    </h1>
+    <h1 class="title">What Ice Cream Flavor Matches Your Personality?<br></h1>
 
     <div class="lang-buttons" aria-label="Language buttons">
       <button class="lang eng active">ENG</button>
@@ -1024,9 +1009,7 @@
   <!-- TWIBBON -->
   <main class="twibbon-page" id="twibbonPage">
     <h1 class="twibbon-title" id="twibbonTitle">Make Your Twibbon</h1>
-    <p class="twibbon-subtitle" id="twibbonSubtitle">
-      Upload your photo and create your flavor frame.
-    </p>
+    <p class="twibbon-subtitle" id="twibbonSubtitle">Upload your photo and create your flavor frame.</p>
 
     <section class="twibbon-layout">
       <div class="twibbon-card">
@@ -1038,9 +1021,7 @@
       <aside class="twibbon-panel">
         <h2 id="twibbonPanelTitle">Your flavor frame</h2>
         <span class="twibbon-result-name" id="twibbonResultName">Vanilla</span>
-        <p id="twibbonHelpText">
-          Upload your photo, drag to adjust, then download your twibbon.
-        </p>
+        <p id="twibbonHelpText">Upload your photo, drag to adjust, then download your twibbon.</p>
 
         <input id="photoInput" type="file" accept="image/*" />
 
@@ -1061,9 +1042,7 @@
 
         <button class="twibbon-btn primary" id="downloadTwibbonBtn" type="button">download twibbon</button>
 
-        <p class="twibbon-note" id="twibbonNote">
-          Frame is selected automatically based on your quiz result.
-        </p>
+        <p class="twibbon-note" id="twibbonNote">Frame is selected automatically based on your quiz result.</p>
       </aside>
     </section>
   </main>
@@ -1104,9 +1083,10 @@
     let answers = [];
     let currentResultKey = 'A';
 
-    const CANVAS_SIZE = 1080;
-    twibbonCanvas.width = CANVAS_SIZE;
-    twibbonCanvas.height = CANVAS_SIZE;
+    const CANVAS_WIDTH = 1080;
+    const CANVAS_HEIGHT = 1350;
+    twibbonCanvas.width = CANVAS_WIDTH;
+    twibbonCanvas.height = CANVAS_HEIGHT;
 
     let userPhoto = null;
     let frameImage = null;
@@ -1116,13 +1096,6 @@
     let isDraggingPhoto = false;
     let lastDragPoint = null;
 
-    /*
-      PENTING:
-      - result image = gambar hasil yang tampil setelah quiz.
-      - frame = PNG transparan untuk twibbon.
-      - Nanti kalau sudah ada database/backend, isi value frame ini dari database sesuai hasil quiz.
-      - Untuk sekarang tetap satu file, jadi frame pakai URL langsung.
-    */
     const resultData = {
       A: {
         ENG: 'Vanilla',
@@ -1149,6 +1122,7 @@
         frame: 'https://raw.githubusercontent.com/starbvoi/scoopoacoba/a0b02ac9d44e69c05f63d8f286d41a6e36f5dcd7/TRANSPARAN%20MATCHA.png'
       }
     };
+
     const quizText = {
       ENG: {
         title: 'What Ice Cream Flavor Matches Your<br>Personality?',
@@ -1171,66 +1145,31 @@
         questions: [
           {
             question: 'Your ideal weekend looks like...',
-            options: [
-              'Staying in and recharging alone',
-              'Going out with friends or family',
-              'Relaxing with someone close to you',
-              'Exploring new places or trying new things'
-            ]
+            options: ['Staying in and recharging alone', 'Going out with friends or family', 'Relaxing with someone close to you', 'Exploring new places or trying new things']
           },
           {
             question: 'When you face a problem, you usually...',
-            options: [
-              'Think it through calmly on your own',
-              'Talk it out with someone',
-              'Seek comfort first, then deal with it',
-              'Find a quick and practical solution'
-            ]
+            options: ['Think it through calmly on your own', 'Talk it out with someone', 'Seek comfort first, then deal with it', 'Find a quick and practical solution']
           },
           {
             question: 'You’re the type of person who is...',
-            options: [
-              'Consistent and low-maintenance',
-              'Expressive and easy to connect with',
-              'Caring and empathetic',
-              'Spontaneous and full of ideas'
-            ]
+            options: ['Consistent and low-maintenance', 'Expressive and easy to connect with', 'Caring and empathetic', 'Spontaneous and full of ideas']
           },
           {
             question: 'In your friend group, you are usually...',
-            options: [
-              'The good listener',
-              'The mood maker',
-              'The safe place to vent',
-              'The one who suggests fun plans'
-            ]
+            options: ['The good listener', 'The mood maker', 'The safe place to vent', 'The one who suggests fun plans']
           },
           {
             question: 'People often describe you as...',
-            options: [
-              'Calm and mature',
-              'Cheerful and sweet',
-              'Warm and genuine',
-              'Unique and different'
-            ]
+            options: ['Calm and mature', 'Cheerful and sweet', 'Warm and genuine', 'Unique and different']
           },
           {
             question: 'You dislike it the most when...',
-            options: [
-              'Things feel chaotic and messy',
-              'The vibe becomes awkward or cold',
-              'Conflicts are left unresolved',
-              'Life feels repetitive and boring'
-            ]
+            options: ['Things feel chaotic and messy', 'The vibe becomes awkward or cold', 'Conflicts are left unresolved', 'Life feels repetitive and boring']
           },
           {
             question: 'If your life had a “flavor,” you’d want it to be...',
-            options: [
-              'Simple but loved by many',
-              'Sweet and uplifting',
-              'Rich and comforting',
-              'Distinct and unforgettable'
-            ]
+            options: ['Simple but loved by many', 'Sweet and uplifting', 'Rich and comforting', 'Distinct and unforgettable']
           }
         ]
       },
@@ -1256,66 +1195,31 @@
         questions: [
           {
             question: 'Akhir pekan idealmu terlihat seperti...',
-            options: [
-              'Berdiam di rumah dan mengisi energi sendiri',
-              'Pergi bersama teman atau keluarga',
-              'Bersantai dengan orang terdekatmu',
-              'Menjelajahi tempat baru atau mencoba hal baru'
-            ]
+            options: ['Berdiam di rumah dan mengisi energi sendiri', 'Pergi bersama teman atau keluarga', 'Bersantai dengan orang terdekatmu', 'Menjelajahi tempat baru atau mencoba hal baru']
           },
           {
             question: 'Saat menghadapi masalah, biasanya kamu...',
-            options: [
-              'Memikirkannya dengan tenang sendiri',
-              'Membicarakannya dengan seseorang',
-              'Mencari kenyamanan dulu, lalu menghadapinya',
-              'Mencari solusi yang cepat dan praktis'
-            ]
+            options: ['Memikirkannya dengan tenang sendiri', 'Membicarakannya dengan seseorang', 'Mencari kenyamanan dulu, lalu menghadapinya', 'Mencari solusi yang cepat dan praktis']
           },
           {
             question: 'Kamu adalah tipe orang yang...',
-            options: [
-              'Konsisten dan tidak ribet',
-              'Ekspresif dan mudah akrab',
-              'Penyayang dan penuh empati',
-              'Spontan dan penuh ide'
-            ]
+            options: ['Konsisten dan tidak ribet', 'Ekspresif dan mudah akrab', 'Penyayang dan penuh empati', 'Spontan dan penuh ide']
           },
           {
             question: 'Di dalam circle pertemanan, biasanya kamu...',
-            options: [
-              'Pendengar yang baik',
-              'Pencair suasana',
-              'Tempat ternyaman untuk bercerita',
-              'Orang yang mengusulkan rencana seru'
-            ]
+            options: ['Pendengar yang baik', 'Pencair suasana', 'Tempat ternyaman untuk bercerita', 'Orang yang mengusulkan rencana seru']
           },
           {
             question: 'Orang-orang sering menggambarkanmu sebagai...',
-            options: [
-              'Tenang dan dewasa',
-              'Ceria dan manis',
-              'Hangat dan tulus',
-              'Unik dan berbeda'
-            ]
+            options: ['Tenang dan dewasa', 'Ceria dan manis', 'Hangat dan tulus', 'Unik dan berbeda']
           },
           {
             question: 'Kamu paling tidak suka ketika...',
-            options: [
-              'Semuanya terasa kacau dan berantakan',
-              'Suasana jadi canggung atau dingin',
-              'Konflik dibiarkan tanpa penyelesaian',
-              'Hidup terasa berulang dan membosankan'
-            ]
+            options: ['Semuanya terasa kacau dan berantakan', 'Suasana jadi canggung atau dingin', 'Konflik dibiarkan tanpa penyelesaian', 'Hidup terasa berulang dan membosankan']
           },
           {
             question: 'Kalau hidupmu punya “rasa”, kamu ingin rasanya...',
-            options: [
-              'Sederhana tapi disukai banyak orang',
-              'Manis dan membangkitkan semangat',
-              'Kaya rasa dan menenangkan',
-              'Berbeda dan sulit dilupakan'
-            ]
+            options: ['Sederhana tapi disukai banyak orang', 'Manis dan membangkitkan semangat', 'Kaya rasa dan menenangkan', 'Berbeda dan sulit dilupakan']
           }
         ]
       }
@@ -1351,7 +1255,6 @@
 
       quizCard.innerHTML = `
         <h2 class="question">${currentQuestion.question}</h2>
-
         <div class="options">
           <button class="option" data-answer="A">${currentQuestion.options[0]}</button>
           <button class="option" data-answer="B">${currentQuestion.options[1]}</button>
@@ -1384,12 +1287,7 @@
     }
 
     function getFinalResult() {
-      const score = {
-        A: 0,
-        B: 0,
-        C: 0,
-        D: 0
-      };
+      const score = { A: 0, B: 0, C: 0, D: 0 };
 
       answers.forEach((answer) => {
         score[answer]++;
@@ -1435,11 +1333,11 @@
 
     function changeLanguage(language) {
       currentLanguage = language;
-
       const isResultPage = document.querySelector('.result-box');
 
       if (twibbonPage.classList.contains('show')) {
         updateTwibbonTexts();
+        drawTwibbon();
       } else if (isResultPage) {
         showResult();
       } else {
@@ -1456,7 +1354,6 @@
       }
 
       answers[currentQuestionIndex] = selectedOption.dataset.answer;
-
       const totalQuestions = quizText[currentLanguage].questions.length;
 
       if (currentQuestionIndex < totalQuestions - 1) {
@@ -1592,51 +1489,59 @@
       twibbonCtx.save();
       twibbonCtx.lineWidth = 34;
       twibbonCtx.strokeStyle = flavorColor;
-      twibbonCtx.strokeRect(34, 34, CANVAS_SIZE - 68, CANVAS_SIZE - 68);
+      twibbonCtx.strokeRect(34, 34, CANVAS_WIDTH - 68, CANVAS_HEIGHT - 68);
 
       twibbonCtx.fillStyle = 'rgba(255, 252, 229, 0.94)';
-      twibbonCtx.fillRect(0, CANVAS_SIZE - 250, CANVAS_SIZE, 250);
+      twibbonCtx.fillRect(0, CANVAS_HEIGHT - 280, CANVAS_WIDTH, 280);
 
       twibbonCtx.fillStyle = '#ea5d62';
       twibbonCtx.font = 'bold 76px Fredoka, Arial, sans-serif';
       twibbonCtx.textAlign = 'center';
-      twibbonCtx.fillText(flavorName, CANVAS_SIZE / 2, CANVAS_SIZE - 145);
+      twibbonCtx.fillText(flavorName, CANVAS_WIDTH / 2, CANVAS_HEIGHT - 165);
 
       twibbonCtx.fillStyle = '#9f6b4d';
       twibbonCtx.font = '42px Kalam, Arial, sans-serif';
-      twibbonCtx.fillText('Scoop Teraphie', CANVAS_SIZE / 2, CANVAS_SIZE - 78);
+      twibbonCtx.fillText('Scoop Teraphie', CANVAS_WIDTH / 2, CANVAS_HEIGHT - 92);
       twibbonCtx.restore();
     }
 
     function drawTwibbon() {
-      twibbonCtx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+      twibbonCtx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
       twibbonCtx.fillStyle = '#fffce5';
-      twibbonCtx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+      twibbonCtx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
       if (userPhoto) {
-        const baseScale = Math.max(CANVAS_SIZE / userPhoto.width, CANVAS_SIZE / userPhoto.height);
+        const baseScale = Math.max(CANVAS_WIDTH / userPhoto.width, CANVAS_HEIGHT / userPhoto.height);
         const drawWidth = userPhoto.width * baseScale * photoScale;
         const drawHeight = userPhoto.height * baseScale * photoScale;
-        const drawX = (CANVAS_SIZE - drawWidth) / 2 + photoX;
-        const drawY = (CANVAS_SIZE - drawHeight) / 2 + photoY;
+        const drawX = (CANVAS_WIDTH - drawWidth) / 2 + photoX;
+        const drawY = (CANVAS_HEIGHT - drawHeight) / 2 + photoY;
 
         twibbonCtx.drawImage(userPhoto, drawX, drawY, drawWidth, drawHeight);
       } else {
         twibbonCtx.fillStyle = '#fffce5';
-        twibbonCtx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+        twibbonCtx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
         twibbonCtx.fillStyle = '#df7996';
         twibbonCtx.font = 'bold 56px Fredoka, Arial, sans-serif';
         twibbonCtx.textAlign = 'center';
-        twibbonCtx.fillText(currentLanguage === 'INA' ? 'Upload fotomu' : 'Upload your photo', CANVAS_SIZE / 2, CANVAS_SIZE / 2 - 18);
+        twibbonCtx.fillText(
+          currentLanguage === 'INA' ? 'Upload fotomu' : 'Upload your photo',
+          CANVAS_WIDTH / 2,
+          CANVAS_HEIGHT / 2 - 18
+        );
 
         twibbonCtx.fillStyle = '#9f6b4d';
         twibbonCtx.font = '36px Kalam, Arial, sans-serif';
-        twibbonCtx.fillText(currentLanguage === 'INA' ? 'lalu geser untuk menyesuaikan' : 'then drag to adjust', CANVAS_SIZE / 2, CANVAS_SIZE / 2 + 44);
+        twibbonCtx.fillText(
+          currentLanguage === 'INA' ? 'lalu geser untuk menyesuaikan' : 'then drag to adjust',
+          CANVAS_WIDTH / 2,
+          CANVAS_HEIGHT / 2 + 44
+        );
       }
 
       if (frameImage) {
-        twibbonCtx.drawImage(frameImage, 0, 0, CANVAS_SIZE, CANVAS_SIZE);
+        twibbonCtx.drawImage(frameImage, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
       } else {
         drawFallbackFrame();
       }
@@ -1649,8 +1554,8 @@
       const clientY = touch ? touch.clientY : event.clientY;
 
       return {
-        x: ((clientX - rect.left) / rect.width) * CANVAS_SIZE,
-        y: ((clientY - rect.top) / rect.height) * CANVAS_SIZE
+        x: ((clientX - rect.left) / rect.width) * CANVAS_WIDTH,
+        y: ((clientY - rect.top) / rect.height) * CANVAS_HEIGHT
       };
     }
 
