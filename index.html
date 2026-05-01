@@ -1,0 +1,1731 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Scoop Teraphie</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Boogaloo&family=Concert+One&family=Chewy&family=Fredoka:wght@500;600;700&family=Inter:wght@400;600;700&family=Kalam:wght@300;400;700&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --brown: #9f6b4d;
+      --pink-1: #ffffff;
+      --pink-2: #ffd9e8;
+      --pink-3: #f8b7cf;
+      --pink-4: #ffdceb;
+      --white: #ffffff;
+      --text-coral: #ea5d62;
+      --mint: #8bc0b2;
+      --mint-dark: #6ea798;
+      --blue: #5babe0;
+      --blue-dark: #4592c5;
+      --cream: #fffce5;
+      --rose: #dd7b95;
+    }
+
+    html,
+    body {
+      width: 100%;
+      min-height: 100%;
+    }
+
+    body {
+      min-height: 100vh;
+      overflow-x: hidden;
+      font-family: "Inter", Arial, sans-serif;
+      background:
+        radial-gradient(circle at 12% 18%, rgba(255, 255, 255, 0.95) 0 8%, transparent 20%),
+        radial-gradient(circle at 88% 24%, rgba(255, 255, 255, 0.9) 0 7%, transparent 18%),
+        radial-gradient(circle at 16% 78%, rgba(255, 255, 255, 0.9) 0 9%, transparent 22%),
+        radial-gradient(circle at 82% 72%, rgba(255, 255, 255, 0.75) 0 8%, transparent 20%),
+        linear-gradient(135deg, #ffffff 0%, #ffd9e8 23%, #f8b7cf 50%, #ffdceb 75%, #ffffff 100%);
+      position: relative;
+    }
+
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      width: 48vw;
+      height: 18vh;
+      pointer-events: none;
+      filter: blur(20px);
+      opacity: 0.5;
+      background:
+        radial-gradient(ellipse at 20% 55%, rgba(255, 255, 255, 0.9) 0 25%, transparent 55%),
+        radial-gradient(ellipse at 48% 45%, rgba(255, 255, 255, 0.85) 0 28%, transparent 58%),
+        radial-gradient(ellipse at 75% 58%, rgba(255, 255, 255, 0.75) 0 22%, transparent 55%);
+      z-index: 0;
+    }
+
+    body::before {
+      top: 17%;
+      left: -8%;
+    }
+
+    body::after {
+      right: -7%;
+      bottom: 13%;
+    }
+
+    /* =========================
+       LOADER
+    ========================= */
+
+    .page-loader {
+      position: fixed;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      background: transparent;
+      z-index: 9999;
+      transition: opacity 0.6s ease, visibility 0.6s ease;
+    }
+
+    .page-loader.hide {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .icecream-loader {
+      position: relative;
+      width: 260px;
+      height: 470px;
+      z-index: 2;
+    }
+
+    .nozzle {
+      position: absolute;
+      top: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 56px;
+      height: 24px;
+      background: linear-gradient(180deg, #8c9199, #666b72);
+      border-radius: 12px;
+      box-shadow: inset 0 2px 4px rgba(255,255,255,0.3);
+      z-index: 20;
+    }
+
+    .nozzle::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: -8px;
+      transform: translateX(-50%);
+      width: 18px;
+      height: 12px;
+      background: #666b72;
+      border-radius: 0 0 8px 8px;
+    }
+
+    .pour {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 16px;
+      border-radius: 999px;
+      opacity: 0;
+      z-index: 15;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.12));
+    }
+
+    .pour.bottom {
+      top: 42px;
+      height: 190px;
+      background: linear-gradient(180deg, #ff84ad, #ff5e91);
+      animation: pourBottom 4.8s infinite ease-in-out;
+    }
+
+    .pour.middle {
+      top: 42px;
+      height: 132px;
+      background: linear-gradient(180deg, #ffe48a, #ffd04a);
+      animation: pourMiddle 4.8s infinite ease-in-out;
+    }
+
+    .pour.top {
+      top: 42px;
+      height: 82px;
+      background: linear-gradient(180deg, #95edca, #57d5a0);
+      animation: pourTop 4.8s infinite ease-in-out;
+    }
+
+    .cone {
+      position: absolute;
+      left: 50%;
+      bottom: 70px;
+      transform: translateX(-50%);
+      width: 120px;
+      height: 150px;
+      clip-path: polygon(50% 100%, 0 0, 100% 0);
+      background:
+        repeating-linear-gradient(
+          135deg,
+          rgba(140, 85, 40, 0.18) 0px,
+          rgba(140, 85, 40, 0.18) 8px,
+          rgba(255,255,255,0.08) 8px,
+          rgba(255,255,255,0.08) 16px
+        ),
+        linear-gradient(180deg, #e6b67c, #c98947);
+      box-shadow: inset 0 6px 10px rgba(255,255,255,0.25);
+      z-index: 1;
+    }
+
+    .scoop {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      overflow: hidden;
+      background: linear-gradient(180deg, #dedede, #cfcfcf);
+      border-radius: 50% 50% 42% 42% / 58% 58% 42% 42%;
+      box-shadow:
+        inset 0 8px 10px rgba(255,255,255,0.5),
+        0 10px 18px rgba(0,0,0,0.08);
+    }
+
+    .scoop::after {
+      content: "";
+      position: absolute;
+      width: 40%;
+      height: 28%;
+      top: 12%;
+      left: 16%;
+      background: rgba(255,255,255,0.28);
+      border-radius: 50%;
+      filter: blur(2px);
+      z-index: 3;
+    }
+
+    .scoop.bottom {
+      width: 136px;
+      height: 96px;
+      bottom: 168px;
+      z-index: 5;
+    }
+
+    .scoop.middle {
+      width: 116px;
+      height: 84px;
+      bottom: 235px;
+      z-index: 6;
+    }
+
+    .scoop.top {
+      width: 96px;
+      height: 72px;
+      bottom: 294px;
+      z-index: 7;
+    }
+
+    .fill {
+      position: absolute;
+      inset: 0;
+      transform-origin: bottom center;
+      transform: scaleY(0);
+      border-radius: inherit;
+      z-index: 2;
+    }
+
+    .bottom .fill {
+      background: linear-gradient(180deg, #ff8db3 0%, #ff6c99 100%);
+      animation: fillBottom 4.8s infinite ease-in-out;
+    }
+
+    .middle .fill {
+      background: linear-gradient(180deg, #ffe99d 0%, #ffd85c 100%);
+      animation: fillMiddle 4.8s infinite ease-in-out;
+    }
+
+    .top .fill {
+      background: linear-gradient(180deg, #9cf0d0 0%, #65dcaa 100%);
+      animation: fillTop 4.8s infinite ease-in-out;
+    }
+
+    .loading-text {
+      position: absolute;
+      bottom: 8px;
+      width: 100%;
+      text-align: center;
+      font-size: 20px;
+      font-weight: 700;
+      color: #8a5a35;
+      letter-spacing: 1px;
+      animation: pulseText 1.2s infinite ease-in-out;
+    }
+
+    .loading-dots::after {
+      content: "";
+      animation: dots 1.4s infinite steps(4);
+    }
+
+    /* =========================
+       LANDING PAGE
+    ========================= */
+
+    .site {
+      position: relative;
+      z-index: 2;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 32px 20px;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(16px);
+      transition: opacity 0.8s ease, transform 0.8s ease, visibility 0.8s ease;
+    }
+
+    .site.show {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .site.hide {
+      display: none;
+    }
+
+    .landing-wrap {
+      width: 100%;
+      max-width: 980px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      text-align: center;
+      gap: 10px;
+    }
+
+    .logo-box {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      margin-bottom: -50px;
+    }
+
+    .logo-box img {
+      width: min(500px, 70vw);
+      max-width: 100%;
+      height: auto;
+      object-fit: contain;
+      display: block;
+      filter: drop-shadow(0 10px 22px rgba(173, 85, 112, 0.10));
+    }
+
+    .tagline {
+      width: min(900px, 92vw);
+      color: var(--text-coral);
+      font-family: "Kalam", cursive;
+      font-weight: 700;
+      font-size: clamp(24px, 2.4vw, 38px);
+      line-height: 1.45;
+      letter-spacing: 0.2px;
+    }
+
+    .start-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 188px;
+      min-height: 74px;
+      padding: 14px 26px;
+      margin-top: 18px;
+      background: var(--mint);
+      color: #ffffff;
+      font-family: "Kalam", cursive;
+      font-weight: 700;
+      font-size: clamp(26px, 2vw, 38px);
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      border-radius: 0;
+      box-shadow: 0 12px 24px rgba(110, 167, 152, 0.22);
+      transition: transform 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .start-btn:hover {
+      transform: translateY(-3px);
+      background: var(--mint-dark);
+      box-shadow: 0 16px 28px rgba(110, 167, 152, 0.30);
+    }
+
+    .start-btn:active {
+      transform: translateY(0);
+    }
+
+    /* =========================
+       QUIZ PAGE
+    ========================= */
+
+    .quiz-page {
+      width: min(1200px, 92%);
+      margin: 0 auto;
+      min-height: 100vh;
+      position: relative;
+      z-index: 1;
+      padding: 74px 0 64px;
+      display: none;
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+      font-family: "Fredoka", sans-serif;
+      color: #ffffff;
+    }
+
+    .quiz-page.show {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .quiz-page.hide {
+      display: none;
+    }
+
+    .title,
+    .twibbon-title {
+      text-align: center;
+      font-family: "Boogaloo", cursive;
+      font-size: clamp(2.1rem, 4.8vw, 4.8rem);
+      line-height: 1.15;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--blue);
+      text-shadow:
+        2px 0 var(--blue-dark),
+        -2px 0 var(--blue-dark),
+        0 2px var(--blue-dark),
+        0 -2px var(--blue-dark);
+    }
+
+    .lang-buttons {
+      width: min(760px, 100%);
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      margin: 34px auto -20px;
+      padding-right: 8px;
+    }
+
+    .lang {
+      border: none;
+      min-width: 64px;
+      height: 42px;
+      border-radius: 0;
+      font-family: "Chewy", cursive;
+      font-size: 1.25rem;
+      letter-spacing: 1px;
+      color: #ffffff;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .lang.eng {
+      background: #9bcfc2;
+    }
+
+    .lang.ina {
+      background: #e58b87;
+    }
+
+    .lang.active {
+      filter: brightness(0.95);
+      transform: translateY(-2px);
+    }
+
+    .quiz-card {
+      width: min(760px, 100%);
+      margin: 40px auto 0;
+      padding: 30px;
+      border-radius: 24px;
+      background: rgba(221, 123, 149, 0.72);
+      box-shadow: 0 16px 25px rgba(171, 87, 111, 0.2);
+      backdrop-filter: blur(4px);
+    }
+
+    .question {
+      font-family: "Kalam", cursive;
+      font-size: clamp(1.3rem, 2.5vw, 2rem);
+      letter-spacing: 1px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      color: #fffafc;
+    }
+
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .option {
+      border: none;
+      width: 100%;
+      min-height: 50px;
+      border-radius: 8px;
+      text-align: left;
+      padding: 0 26px;
+      font-family: "Fredoka", sans-serif;
+      font-size: clamp(1rem, 2vw, 1.4rem);
+      font-weight: 700;
+      color: #df7996;
+      background: rgba(255, 252, 229, 0.92);
+      cursor: pointer;
+      box-shadow: inset 0 -3px 0 rgba(255, 225, 232, 0.8);
+      transition: 0.2s ease;
+    }
+
+    .option:hover,
+    .option.selected {
+      transform: translateX(8px);
+      background: #fff7c4;
+      color: #bf6e79;
+      box-shadow: 0 8px 14px rgba(161, 77, 104, 0.16);
+    }
+
+    .next-wrap {
+      width: min(760px, 100%);
+      margin: 18px auto 0;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .next-btn,
+    .try-again-btn,
+    .download-result-btn,
+    .twibbon-btn {
+      border: none;
+      border-radius: 0;
+      padding: 5px 15px;
+      font-family: "Chewy", cursive;
+      font-size: 1.5rem;
+      letter-spacing: 1px;
+      color: #ffffff;
+      box-shadow: 0 8px 15px rgba(183, 76, 112, 0.24);
+      cursor: pointer;
+      transition: 0.2s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .next-btn,
+    .download-result-btn,
+    .twibbon-btn.primary {
+      background: rgba(155, 207, 194, 1);
+    }
+
+    .try-again-btn,
+    .twibbon-btn.secondary {
+      background: #e58b87;
+    }
+
+    .twibbon-btn.light {
+      color: #df7996;
+      background: rgba(255, 252, 229, 0.95);
+    }
+
+    .next-btn:hover,
+    .try-again-btn:hover,
+    .download-result-btn:hover,
+    .twibbon-btn:hover {
+      transform: translateY(-3px) scale(1.03);
+    }
+
+    .result-actions {
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .quiz-card.result-card {
+      width: min(760px, 100%);
+      padding: 0;
+      border-radius: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .result-box {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .result-img {
+      display: block;
+      width: 100%;
+      max-width: 760px;
+      height: auto;
+      margin: 0 auto;
+      border-radius: 0;
+    }
+
+    /* =========================
+       TWIBBON PAGE
+    ========================= */
+
+    .twibbon-page {
+      width: min(1100px, 92%);
+      margin: 0 auto;
+      min-height: 100vh;
+      position: relative;
+      z-index: 2;
+      padding: 56px 0 64px;
+      display: none;
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+      font-family: "Fredoka", sans-serif;
+      color: #ffffff;
+    }
+
+    .twibbon-page.show {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .twibbon-subtitle {
+      width: min(760px, 100%);
+      margin: 14px auto 26px;
+      color: var(--text-coral);
+      text-align: center;
+      font-family: "Kalam", cursive;
+      font-size: clamp(1.2rem, 2.4vw, 2rem);
+      font-weight: 700;
+      line-height: 1.35;
+    }
+
+    .twibbon-layout {
+      width: min(940px, 100%);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .twibbon-card,
+    .twibbon-panel {
+      background: rgba(221, 123, 149, 0.72);
+      box-shadow: 0 16px 25px rgba(171, 87, 111, 0.2);
+      backdrop-filter: blur(4px);
+      border-radius: 24px;
+    }
+
+    .twibbon-card {
+      padding: 22px;
+    }
+
+    .twibbon-canvas-wrap {
+      width: 100%;
+      max-width: 640px;
+      aspect-ratio: 1 / 1;
+      margin: 0 auto;
+      overflow: hidden;
+      background: rgba(255, 252, 229, 0.95);
+      border: 8px solid rgba(255, 252, 229, 0.7);
+      box-shadow: inset 0 -5px 0 rgba(255, 225, 232, 0.8);
+    }
+
+    #twibbonCanvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      cursor: move;
+      touch-action: none;
+      user-select: none;
+    }
+
+    .twibbon-panel {
+      padding: 22px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .twibbon-panel h2 {
+      font-family: "Kalam", cursive;
+      font-size: 1.8rem;
+      color: #fffafc;
+      line-height: 1.1;
+    }
+
+    .twibbon-panel p {
+      color: #fffafc;
+      line-height: 1.5;
+      font-weight: 600;
+    }
+
+    .twibbon-result-name {
+      display: inline-flex;
+      width: fit-content;
+      padding: 6px 12px;
+      color: #df7996;
+      background: rgba(255, 252, 229, 0.95);
+      font-family: "Chewy", cursive;
+      font-size: 1.4rem;
+      letter-spacing: 1px;
+    }
+
+    .twibbon-field {
+      display: grid;
+      gap: 8px;
+    }
+
+    .twibbon-field-header {
+      display: flex;
+      justify-content: space-between;
+      color: #fffafc;
+      font-family: "Fredoka", sans-serif;
+      font-weight: 700;
+    }
+
+    .twibbon-field input[type="range"] {
+      width: 100%;
+      accent-color: var(--mint);
+    }
+
+    #photoInput {
+      display: none;
+    }
+
+    .twibbon-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .twibbon-actions .twibbon-btn,
+    .twibbon-panel > .twibbon-btn {
+      width: 100%;
+      min-height: 46px;
+      padding: 7px 12px;
+    }
+
+    .twibbon-note {
+      font-size: 0.95rem;
+      opacity: 0.95;
+    }
+
+    /* =========================
+       ANIMATION
+    ========================= */
+
+    @keyframes fillBottom {
+      0%, 8% { transform: scaleY(0); }
+      28%, 100% { transform: scaleY(1); }
+    }
+
+    @keyframes fillMiddle {
+      0%, 38% { transform: scaleY(0); }
+      58%, 100% { transform: scaleY(1); }
+    }
+
+    @keyframes fillTop {
+      0%, 68% { transform: scaleY(0); }
+      88%, 100% { transform: scaleY(1); }
+    }
+
+    @keyframes pourBottom {
+      0%, 6%, 30%, 100% {
+        opacity: 0;
+        transform: translateX(-50%) scaleY(0);
+      }
+      10%, 26% {
+        opacity: 1;
+        transform: translateX(-50%) scaleY(1);
+      }
+    }
+
+    @keyframes pourMiddle {
+      0%, 36%, 60%, 100% {
+        opacity: 0;
+        transform: translateX(-50%) scaleY(0);
+      }
+      40%, 56% {
+        opacity: 1;
+        transform: translateX(-50%) scaleY(1);
+      }
+    }
+
+    @keyframes pourTop {
+      0%, 66%, 90%, 100% {
+        opacity: 0;
+        transform: translateX(-50%) scaleY(0);
+      }
+      70%, 86% {
+        opacity: 1;
+        transform: translateX(-50%) scaleY(1);
+      }
+    }
+
+    @keyframes pulseText {
+      0%, 100% {
+        transform: translateY(0);
+        opacity: 0.85;
+      }
+      50% {
+        transform: translateY(-2px);
+        opacity: 1;
+      }
+    }
+
+    @keyframes dots {
+      0% { content: ""; }
+      25% { content: "."; }
+      50% { content: ".."; }
+      75% { content: "..."; }
+      100% { content: ""; }
+    }
+
+    /* =========================
+       RESPONSIVE
+    ========================= */
+
+    @media (max-width: 900px) {
+      .landing-wrap {
+        gap: 8px;
+      }
+
+      .logo-box {
+        margin-bottom: -38px;
+      }
+
+      .logo-box img {
+        width: min(470px, 82vw);
+      }
+
+      .start-btn {
+        min-width: 170px;
+        min-height: 66px;
+      }
+
+      .twibbon-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .quiz-page,
+      .twibbon-page {
+        width: min(390px, 92%);
+        padding-top: 46px;
+        padding-bottom: 48px;
+      }
+
+      .title,
+      .twibbon-title {
+        color: var(--blue);
+        font-size: clamp(2rem, 10vw, 3.2rem);
+        text-shadow:
+          2px 0 var(--blue-dark),
+          -2px 0 var(--blue-dark),
+          0 2px var(--blue-dark),
+          0 -2px var(--blue-dark);
+      }
+
+      .lang-buttons {
+        justify-content: flex-end;
+        margin: 28px auto -22px;
+        padding-right: 4px;
+      }
+
+      .lang {
+        min-width: 58px;
+        height: 38px;
+        font-size: 1.1rem;
+      }
+
+      .quiz-card {
+        margin-top: 36px;
+        padding: 30px 22px;
+        border-radius: 18px;
+      }
+
+      .option {
+        min-height: 50px;
+        padding: 0 18px;
+      }
+
+      .quiz-card.result-card {
+        width: 100%;
+        padding: 0;
+        border-radius: 0;
+        overflow: hidden;
+      }
+
+      .result-img {
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        border-radius: 0;
+      }
+
+      .result-actions {
+        width: 100%;
+        justify-content: space-between;
+        gap: 10px;
+      }
+
+      .try-again-btn,
+      .download-result-btn {
+        font-size: 1.15rem;
+        padding: 5px 10px;
+      }
+
+      .twibbon-card,
+      .twibbon-panel {
+        border-radius: 18px;
+      }
+
+      .twibbon-card {
+        padding: 14px;
+      }
+
+      .twibbon-panel {
+        padding: 18px;
+      }
+
+      .twibbon-canvas-wrap {
+        border-width: 6px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .site {
+        padding: 24px 16px 36px;
+      }
+
+      .landing-wrap {
+        gap: 6px;
+      }
+
+      .logo-box {
+        margin-bottom: -24px;
+      }
+
+      .logo-box img {
+        width: min(420px, 92vw);
+      }
+
+      .tagline {
+        width: 95%;
+        font-size: clamp(22px, 5vw, 30px);
+      }
+
+      .start-btn {
+        min-width: 160px;
+        min-height: 62px;
+        margin-top: 14px;
+        font-size: clamp(24px, 6vw, 34px);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- MUSIC -->
+  <!-- Ganti src di bawah ini dengan link musik kamu. Contoh: ./music.mp3 atau https://domain.com/music.mp3 -->
+  <audio id="bgMusic" src="ISI_LINK_MUSIK_DI_SINI" loop preload="auto"></audio>
+
+  <!-- LOADER -->
+  <div class="page-loader" id="pageLoader">
+    <div class="icecream-loader">
+      <div class="nozzle"></div>
+
+      <div class="pour bottom"></div>
+      <div class="pour middle"></div>
+      <div class="pour top"></div>
+
+      <div class="scoop top">
+        <div class="fill"></div>
+      </div>
+
+      <div class="scoop middle">
+        <div class="fill"></div>
+      </div>
+
+      <div class="scoop bottom">
+        <div class="fill"></div>
+      </div>
+
+      <div class="cone"></div>
+
+      <div class="loading-text">
+        Loading<span class="loading-dots"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- LANDING -->
+  <main class="site" id="siteContent">
+    <section class="landing-wrap">
+      <div class="logo-box">
+        <img
+          src="https://i.ibb.co.com/KpG45xBD/LOGO-1.png"
+          alt="Scoop Teraphie Logo"
+        />
+      </div>
+
+      <p class="tagline">
+        There’s no ‘better’ personality, every flavor has its own charm.
+        So... what flavor are you?
+      </p>
+
+      <button class="start-btn" id="startBtn">START</button>
+    </section>
+  </main>
+
+  <!-- QUIZ -->
+  <main class="quiz-page" id="quizPage">
+    <h1 class="title">
+      What Ice Cream Flavor Matches Your Personality?<br>
+    </h1>
+
+    <div class="lang-buttons" aria-label="Language buttons">
+      <button class="lang eng active">ENG</button>
+      <button class="lang ina">INA</button>
+    </div>
+
+    <section class="quiz-card">
+      <h2 class="question">Your ideal weekend looks like...</h2>
+
+      <div class="options">
+        <button class="option">Staying in and recharging alone</button>
+        <button class="option">Going out with friends or family</button>
+        <button class="option">Relaxing with someone close to you</button>
+        <button class="option">Exploring new places or trying new things</button>
+      </div>
+    </section>
+
+    <div class="next-wrap">
+      <button class="next-btn">next !</button>
+    </div>
+  </main>
+
+  <!-- TWIBBON -->
+  <main class="twibbon-page" id="twibbonPage">
+    <h1 class="twibbon-title" id="twibbonTitle">Make Your Twibbon</h1>
+    <p class="twibbon-subtitle" id="twibbonSubtitle">
+      Upload your photo and create your flavor frame.
+    </p>
+
+    <section class="twibbon-layout">
+      <div class="twibbon-card">
+        <div class="twibbon-canvas-wrap">
+          <canvas id="twibbonCanvas"></canvas>
+        </div>
+      </div>
+
+      <aside class="twibbon-panel">
+        <h2 id="twibbonPanelTitle">Your flavor frame</h2>
+        <span class="twibbon-result-name" id="twibbonResultName">Vanilla</span>
+        <p id="twibbonHelpText">
+          Upload your photo, drag to adjust, then download your twibbon.
+        </p>
+
+        <input id="photoInput" type="file" accept="image/*" />
+
+        <button class="twibbon-btn primary" id="uploadPhotoBtn" type="button">upload photo</button>
+
+        <div class="twibbon-field">
+          <div class="twibbon-field-header">
+            <span id="zoomLabel">zoom photo</span>
+            <span id="zoomText">1.00x</span>
+          </div>
+          <input id="scaleInput" type="range" min="0.6" max="2.5" step="0.01" value="1" />
+        </div>
+
+        <div class="twibbon-actions">
+          <button class="twibbon-btn secondary" id="backToResultBtn" type="button">back</button>
+          <button class="twibbon-btn light" id="resetTwibbonBtn" type="button">reset</button>
+        </div>
+
+        <button class="twibbon-btn primary" id="downloadTwibbonBtn" type="button">download twibbon</button>
+
+        <p class="twibbon-note" id="twibbonNote">
+          Frame is selected automatically based on your quiz result.
+        </p>
+      </aside>
+    </section>
+  </main>
+
+  <script>
+    const pageLoader = document.getElementById("pageLoader");
+    const siteContent = document.getElementById("siteContent");
+    const startBtn = document.getElementById("startBtn");
+    const quizPage = document.getElementById("quizPage");
+    const bgMusic = document.getElementById("bgMusic");
+
+    const langButtons = document.querySelectorAll('.lang');
+    const langButtonsWrapper = document.querySelector('.lang-buttons');
+    const quizCard = document.querySelector('.quiz-card');
+    const nextWrap = document.querySelector('.next-wrap');
+
+    const twibbonPage = document.getElementById('twibbonPage');
+    const twibbonTitle = document.getElementById('twibbonTitle');
+    const twibbonSubtitle = document.getElementById('twibbonSubtitle');
+    const twibbonPanelTitle = document.getElementById('twibbonPanelTitle');
+    const twibbonResultName = document.getElementById('twibbonResultName');
+    const twibbonHelpText = document.getElementById('twibbonHelpText');
+    const zoomLabel = document.getElementById('zoomLabel');
+    const twibbonNote = document.getElementById('twibbonNote');
+
+    const twibbonCanvas = document.getElementById('twibbonCanvas');
+    const twibbonCtx = twibbonCanvas.getContext('2d');
+    const photoInput = document.getElementById('photoInput');
+    const uploadPhotoBtn = document.getElementById('uploadPhotoBtn');
+    const scaleInput = document.getElementById('scaleInput');
+    const zoomText = document.getElementById('zoomText');
+    const resetTwibbonBtn = document.getElementById('resetTwibbonBtn');
+    const downloadTwibbonBtn = document.getElementById('downloadTwibbonBtn');
+    const backToResultBtn = document.getElementById('backToResultBtn');
+
+    let currentLanguage = 'ENG';
+    let currentQuestionIndex = 0;
+    let answers = [];
+    let currentResultKey = 'A';
+
+    const CANVAS_SIZE = 1080;
+    twibbonCanvas.width = CANVAS_SIZE;
+    twibbonCanvas.height = CANVAS_SIZE;
+
+    let userPhoto = null;
+    let frameImage = null;
+    let photoScale = 1;
+    let photoX = 0;
+    let photoY = 0;
+    let isDraggingPhoto = false;
+    let lastDragPoint = null;
+
+    /*
+      PENTING:
+      - result image = gambar hasil yang tampil setelah quiz.
+      - frame = PNG transparan untuk twibbon.
+      - Nanti kalau sudah ada database/backend, isi value frame ini dari database sesuai hasil quiz.
+      - Untuk sekarang tetap satu file, jadi frame pakai URL langsung.
+    */
+    const resultData = {
+      A: {
+        ENG: 'Vanilla',
+        INA: 'Vanilla',
+        image: 'ISI_LINK_GAMBAR_VANILLA_DI_SINI',
+        frame: 'ISI_LINK_FRAME_VANILLA_TRANSPARAN_DI_SINI'
+      },
+      B: {
+        ENG: 'Strawberry',
+        INA: 'Stroberi',
+        image: 'https://i.ibb.co.com/1f2Chx80/STRAWBERRY.png',
+        frame: 'ISI_LINK_FRAME_STRAWBERRY_TRANSPARAN_DI_SINI'
+      },
+      C: {
+        ENG: 'Chocolate',
+        INA: 'Cokelat',
+        image: 'ISI_LINK_GAMBAR_CHOCOLATE_DI_SINI',
+        frame: 'ISI_LINK_FRAME_CHOCOLATE_TRANSPARAN_DI_SINI'
+      },
+      D: {
+        ENG: 'Matcha',
+        INA: 'Matcha',
+        image: 'ISI_LINK_GAMBAR_MATCHA_DI_SINI',
+        frame: 'ISI_LINK_FRAME_MATCHA_TRANSPARAN_DI_SINI'
+      }
+    };
+
+    const quizText = {
+      ENG: {
+        title: 'What Ice Cream Flavor Matches Your<br>Personality?',
+        next: 'next !',
+        finish: 'finish !',
+        tryAgain: 'try again',
+        download: 'make twibbon',
+        alert: 'Please choose an answer first!',
+        twibbonTitle: 'Make Your Twibbon',
+        twibbonSubtitle: 'Upload your photo and create your flavor frame.',
+        twibbonPanelTitle: 'Your flavor frame',
+        twibbonHelpText: 'Upload your photo, drag to adjust, then download your twibbon.',
+        uploadPhoto: 'upload photo',
+        zoom: 'zoom photo',
+        back: 'back',
+        reset: 'reset',
+        downloadTwibbon: 'download twibbon',
+        note: 'Frame is selected automatically based on your quiz result.',
+        uploadFirstAlert: 'Please upload your photo first!',
+        questions: [
+          {
+            question: 'Your ideal weekend looks like...',
+            options: [
+              'Staying in and recharging alone',
+              'Going out with friends or family',
+              'Relaxing with someone close to you',
+              'Exploring new places or trying new things'
+            ]
+          },
+          {
+            question: 'When you face a problem, you usually...',
+            options: [
+              'Think it through calmly on your own',
+              'Talk it out with someone',
+              'Seek comfort first, then deal with it',
+              'Find a quick and practical solution'
+            ]
+          },
+          {
+            question: 'You’re the type of person who is...',
+            options: [
+              'Consistent and low-maintenance',
+              'Expressive and easy to connect with',
+              'Caring and empathetic',
+              'Spontaneous and full of ideas'
+            ]
+          },
+          {
+            question: 'In your friend group, you are usually...',
+            options: [
+              'The good listener',
+              'The mood maker',
+              'The safe place to vent',
+              'The one who suggests fun plans'
+            ]
+          },
+          {
+            question: 'People often describe you as...',
+            options: [
+              'Calm and mature',
+              'Cheerful and sweet',
+              'Warm and genuine',
+              'Unique and different'
+            ]
+          },
+          {
+            question: 'You dislike it the most when...',
+            options: [
+              'Things feel chaotic and messy',
+              'The vibe becomes awkward or cold',
+              'Conflicts are left unresolved',
+              'Life feels repetitive and boring'
+            ]
+          },
+          {
+            question: 'If your life had a “flavor,” you’d want it to be...',
+            options: [
+              'Simple but loved by many',
+              'Sweet and uplifting',
+              'Rich and comforting',
+              'Distinct and unforgettable'
+            ]
+          }
+        ]
+      },
+
+      INA: {
+        title: 'Rasa Es Krim Apa yang Cocok dengan<br>Kepribadianmu?',
+        next: 'lanjut !',
+        finish: 'selesai !',
+        tryAgain: 'coba lagi',
+        download: 'buat twibbon',
+        alert: 'Pilih jawaban dulu ya!',
+        twibbonTitle: 'Buat Twibbon Kamu',
+        twibbonSubtitle: 'Upload fotomu dan buat frame sesuai rasa kepribadianmu.',
+        twibbonPanelTitle: 'Frame rasa kamu',
+        twibbonHelpText: 'Upload foto, geser untuk menyesuaikan posisi, lalu download twibbon kamu.',
+        uploadPhoto: 'upload foto',
+        zoom: 'zoom foto',
+        back: 'kembali',
+        reset: 'reset',
+        downloadTwibbon: 'download twibbon',
+        note: 'Frame dipilih otomatis sesuai hasil quiz kamu.',
+        uploadFirstAlert: 'Upload fotomu dulu ya!',
+        questions: [
+          {
+            question: 'Akhir pekan idealmu terlihat seperti...',
+            options: [
+              'Berdiam di rumah dan mengisi energi sendiri',
+              'Pergi bersama teman atau keluarga',
+              'Bersantai dengan orang terdekatmu',
+              'Menjelajahi tempat baru atau mencoba hal baru'
+            ]
+          },
+          {
+            question: 'Saat menghadapi masalah, biasanya kamu...',
+            options: [
+              'Memikirkannya dengan tenang sendiri',
+              'Membicarakannya dengan seseorang',
+              'Mencari kenyamanan dulu, lalu menghadapinya',
+              'Mencari solusi yang cepat dan praktis'
+            ]
+          },
+          {
+            question: 'Kamu adalah tipe orang yang...',
+            options: [
+              'Konsisten dan tidak ribet',
+              'Ekspresif dan mudah akrab',
+              'Penyayang dan penuh empati',
+              'Spontan dan penuh ide'
+            ]
+          },
+          {
+            question: 'Di dalam circle pertemanan, biasanya kamu...',
+            options: [
+              'Pendengar yang baik',
+              'Pencair suasana',
+              'Tempat ternyaman untuk bercerita',
+              'Orang yang mengusulkan rencana seru'
+            ]
+          },
+          {
+            question: 'Orang-orang sering menggambarkanmu sebagai...',
+            options: [
+              'Tenang dan dewasa',
+              'Ceria dan manis',
+              'Hangat dan tulus',
+              'Unik dan berbeda'
+            ]
+          },
+          {
+            question: 'Kamu paling tidak suka ketika...',
+            options: [
+              'Semuanya terasa kacau dan berantakan',
+              'Suasana jadi canggung atau dingin',
+              'Konflik dibiarkan tanpa penyelesaian',
+              'Hidup terasa berulang dan membosankan'
+            ]
+          },
+          {
+            question: 'Kalau hidupmu punya “rasa”, kamu ingin rasanya...',
+            options: [
+              'Sederhana tapi disukai banyak orang',
+              'Manis dan membangkitkan semangat',
+              'Kaya rasa dan menenangkan',
+              'Berbeda dan sulit dilupakan'
+            ]
+          }
+        ]
+      }
+    };
+
+    window.addEventListener("load", () => {
+      setTimeout(() => {
+        pageLoader.classList.add("hide");
+        siteContent.classList.add("show");
+      }, 5200);
+    });
+
+    startBtn.addEventListener("click", () => {
+      siteContent.classList.add("hide");
+      quizPage.classList.add("show");
+      document.body.style.overflowY = "auto";
+
+      bgMusic.volume = 0.7;
+      bgMusic.loop = true;
+
+      bgMusic.play().catch(() => {
+        console.log("Musik belum bisa diputar. Pastikan link musik valid dan START diklik oleh user.");
+      });
+    });
+
+    function showQuestion() {
+      const selectedQuiz = quizText[currentLanguage];
+      const currentQuestion = selectedQuiz.questions[currentQuestionIndex];
+
+      quizCard.classList.remove('result-card');
+      langButtonsWrapper.style.display = 'flex';
+      document.querySelector('.title').innerHTML = selectedQuiz.title;
+
+      quizCard.innerHTML = `
+        <h2 class="question">${currentQuestion.question}</h2>
+
+        <div class="options">
+          <button class="option" data-answer="A">${currentQuestion.options[0]}</button>
+          <button class="option" data-answer="B">${currentQuestion.options[1]}</button>
+          <button class="option" data-answer="C">${currentQuestion.options[2]}</button>
+          <button class="option" data-answer="D">${currentQuestion.options[3]}</button>
+        </div>
+      `;
+
+      const newOptions = document.querySelectorAll('.option');
+
+      newOptions.forEach((option) => {
+        option.addEventListener('click', () => {
+          newOptions.forEach((item) => item.classList.remove('selected'));
+          option.classList.add('selected');
+        });
+      });
+
+      nextWrap.classList.remove('result-actions');
+      nextWrap.style.display = 'flex';
+
+      if (currentQuestionIndex === selectedQuiz.questions.length - 1) {
+        nextWrap.innerHTML = `<button class="next-btn">${selectedQuiz.finish}</button>`;
+      } else {
+        nextWrap.innerHTML = `<button class="next-btn">${selectedQuiz.next}</button>`;
+      }
+
+      langButtons.forEach((button) => {
+        button.classList.toggle('active', button.textContent.trim() === currentLanguage);
+      });
+    }
+
+    function getFinalResult() {
+      const score = {
+        A: 0,
+        B: 0,
+        C: 0,
+        D: 0
+      };
+
+      answers.forEach((answer) => {
+        score[answer]++;
+      });
+
+      let highestAnswer = 'A';
+
+      Object.keys(score).forEach((key) => {
+        if (score[key] > score[highestAnswer]) {
+          highestAnswer = key;
+        }
+      });
+
+      return highestAnswer;
+    }
+
+    function showResult() {
+      currentResultKey = getFinalResult();
+      const result = resultData[currentResultKey];
+      const selectedQuiz = quizText[currentLanguage];
+
+      quizPage.classList.remove('hide');
+      twibbonPage.classList.remove('show');
+      quizCard.classList.add('result-card');
+
+      document.querySelector('.title').innerHTML = selectedQuiz.title;
+
+      quizCard.innerHTML = `
+        <div class="result-box">
+          <img class="result-img" src="${result.image}" alt="${result.ENG}">
+        </div>
+      `;
+
+      langButtonsWrapper.style.display = 'none';
+
+      nextWrap.classList.add('result-actions');
+      nextWrap.style.display = 'flex';
+      nextWrap.innerHTML = `
+        <button class="try-again-btn">${selectedQuiz.tryAgain}</button>
+        <button class="download-result-btn" type="button">${selectedQuiz.download}</button>
+      `;
+    }
+
+    function changeLanguage(language) {
+      currentLanguage = language;
+
+      const isResultPage = document.querySelector('.result-box');
+
+      if (twibbonPage.classList.contains('show')) {
+        updateTwibbonTexts();
+      } else if (isResultPage) {
+        showResult();
+      } else {
+        showQuestion();
+      }
+    }
+
+    function goToNextQuestion() {
+      const selectedOption = document.querySelector('.option.selected');
+
+      if (!selectedOption) {
+        alert(quizText[currentLanguage].alert);
+        return;
+      }
+
+      answers[currentQuestionIndex] = selectedOption.dataset.answer;
+
+      const totalQuestions = quizText[currentLanguage].questions.length;
+
+      if (currentQuestionIndex < totalQuestions - 1) {
+        currentQuestionIndex++;
+        showQuestion();
+      } else {
+        showResult();
+      }
+    }
+
+    function restartQuiz() {
+      currentQuestionIndex = 0;
+      answers = [];
+      currentResultKey = 'A';
+      userPhoto = null;
+      frameImage = null;
+      resetTwibbonState();
+      twibbonPage.classList.remove('show');
+      quizPage.classList.remove('hide');
+      quizPage.classList.add('show');
+      showQuestion();
+    }
+
+    langButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        changeLanguage(button.textContent.trim());
+      });
+    });
+
+    nextWrap.addEventListener('click', (event) => {
+      if (event.target.classList.contains('next-btn')) {
+        goToNextQuestion();
+      }
+
+      if (event.target.classList.contains('try-again-btn')) {
+        restartQuiz();
+      }
+
+      if (event.target.classList.contains('download-result-btn')) {
+        openTwibbonPage();
+      }
+    });
+
+    function updateTwibbonTexts() {
+      const selectedQuiz = quizText[currentLanguage];
+      const result = resultData[currentResultKey];
+
+      twibbonTitle.textContent = selectedQuiz.twibbonTitle;
+      twibbonSubtitle.textContent = selectedQuiz.twibbonSubtitle;
+      twibbonPanelTitle.textContent = selectedQuiz.twibbonPanelTitle;
+      twibbonResultName.textContent = result[currentLanguage];
+      twibbonHelpText.textContent = selectedQuiz.twibbonHelpText;
+      uploadPhotoBtn.textContent = selectedQuiz.uploadPhoto;
+      zoomLabel.textContent = selectedQuiz.zoom;
+      backToResultBtn.textContent = selectedQuiz.back;
+      resetTwibbonBtn.textContent = selectedQuiz.reset;
+      downloadTwibbonBtn.textContent = selectedQuiz.downloadTwibbon;
+      twibbonNote.textContent = selectedQuiz.note;
+    }
+
+    function openTwibbonPage() {
+      quizPage.classList.add('hide');
+      twibbonPage.classList.add('show');
+      updateTwibbonTexts();
+      loadSelectedFrame();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function resetTwibbonState() {
+      photoScale = 1;
+      photoX = 0;
+      photoY = 0;
+      scaleInput.value = '1';
+      zoomText.textContent = '1.00x';
+      drawTwibbon();
+    }
+
+    function loadImageFromUrl(url, callback) {
+      const image = new Image();
+      image.crossOrigin = 'anonymous';
+      image.onload = function () {
+        callback(image);
+        drawTwibbon();
+      };
+      image.onerror = function () {
+        frameImage = null;
+        drawTwibbon();
+        console.log('Frame gagal dimuat. Pastikan URL frame valid dan mengizinkan akses gambar.');
+      };
+      image.src = url;
+    }
+
+    function loadSelectedFrame() {
+      const frameUrl = resultData[currentResultKey].frame;
+      frameImage = null;
+      resetTwibbonState();
+
+      if (frameUrl && !frameUrl.includes('ISI_LINK_FRAME')) {
+        loadImageFromUrl(frameUrl, function (image) {
+          frameImage = image;
+        });
+      } else {
+        drawTwibbon();
+      }
+    }
+
+    function loadPhotoFromFile(file) {
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function () {
+        const image = new Image();
+        image.onload = function () {
+          userPhoto = image;
+          resetTwibbonState();
+        };
+        image.src = reader.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function drawFallbackFrame() {
+      const result = resultData[currentResultKey];
+      const flavorName = result[currentLanguage].toUpperCase();
+
+      const flavorColor = {
+        A: '#f4dfb8',
+        B: '#ff8db3',
+        C: '#9f6b4d',
+        D: '#8bc0b2'
+      }[currentResultKey] || '#ff8db3';
+
+      twibbonCtx.save();
+      twibbonCtx.lineWidth = 34;
+      twibbonCtx.strokeStyle = flavorColor;
+      twibbonCtx.strokeRect(34, 34, CANVAS_SIZE - 68, CANVAS_SIZE - 68);
+
+      twibbonCtx.fillStyle = 'rgba(255, 252, 229, 0.94)';
+      twibbonCtx.fillRect(0, CANVAS_SIZE - 250, CANVAS_SIZE, 250);
+
+      twibbonCtx.fillStyle = '#ea5d62';
+      twibbonCtx.font = 'bold 76px Fredoka, Arial, sans-serif';
+      twibbonCtx.textAlign = 'center';
+      twibbonCtx.fillText(flavorName, CANVAS_SIZE / 2, CANVAS_SIZE - 145);
+
+      twibbonCtx.fillStyle = '#9f6b4d';
+      twibbonCtx.font = '42px Kalam, Arial, sans-serif';
+      twibbonCtx.fillText('Scoop Teraphie', CANVAS_SIZE / 2, CANVAS_SIZE - 78);
+      twibbonCtx.restore();
+    }
+
+    function drawTwibbon() {
+      twibbonCtx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+      twibbonCtx.fillStyle = '#fffce5';
+      twibbonCtx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+
+      if (userPhoto) {
+        const baseScale = Math.max(CANVAS_SIZE / userPhoto.width, CANVAS_SIZE / userPhoto.height);
+        const drawWidth = userPhoto.width * baseScale * photoScale;
+        const drawHeight = userPhoto.height * baseScale * photoScale;
+        const drawX = (CANVAS_SIZE - drawWidth) / 2 + photoX;
+        const drawY = (CANVAS_SIZE - drawHeight) / 2 + photoY;
+
+        twibbonCtx.drawImage(userPhoto, drawX, drawY, drawWidth, drawHeight);
+      } else {
+        twibbonCtx.fillStyle = '#fffce5';
+        twibbonCtx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+
+        twibbonCtx.fillStyle = '#df7996';
+        twibbonCtx.font = 'bold 56px Fredoka, Arial, sans-serif';
+        twibbonCtx.textAlign = 'center';
+        twibbonCtx.fillText(currentLanguage === 'INA' ? 'Upload fotomu' : 'Upload your photo', CANVAS_SIZE / 2, CANVAS_SIZE / 2 - 18);
+
+        twibbonCtx.fillStyle = '#9f6b4d';
+        twibbonCtx.font = '36px Kalam, Arial, sans-serif';
+        twibbonCtx.fillText(currentLanguage === 'INA' ? 'lalu geser untuk menyesuaikan' : 'then drag to adjust', CANVAS_SIZE / 2, CANVAS_SIZE / 2 + 44);
+      }
+
+      if (frameImage) {
+        twibbonCtx.drawImage(frameImage, 0, 0, CANVAS_SIZE, CANVAS_SIZE);
+      } else {
+        drawFallbackFrame();
+      }
+    }
+
+    function getCanvasPoint(event) {
+      const rect = twibbonCanvas.getBoundingClientRect();
+      const touch = event.touches && event.touches[0];
+      const clientX = touch ? touch.clientX : event.clientX;
+      const clientY = touch ? touch.clientY : event.clientY;
+
+      return {
+        x: ((clientX - rect.left) / rect.width) * CANVAS_SIZE,
+        y: ((clientY - rect.top) / rect.height) * CANVAS_SIZE
+      };
+    }
+
+    function startPhotoDrag(event) {
+      if (!userPhoto) return;
+      isDraggingPhoto = true;
+      lastDragPoint = getCanvasPoint(event);
+    }
+
+    function movePhotoDrag(event) {
+      if (!isDraggingPhoto || !lastDragPoint) return;
+      event.preventDefault();
+
+      const point = getCanvasPoint(event);
+      photoX += point.x - lastDragPoint.x;
+      photoY += point.y - lastDragPoint.y;
+      lastDragPoint = point;
+      drawTwibbon();
+    }
+
+    function stopPhotoDrag() {
+      isDraggingPhoto = false;
+      lastDragPoint = null;
+    }
+
+    uploadPhotoBtn.addEventListener('click', () => {
+      photoInput.click();
+    });
+
+    photoInput.addEventListener('change', (event) => {
+      loadPhotoFromFile(event.target.files[0]);
+    });
+
+    scaleInput.addEventListener('input', (event) => {
+      photoScale = Number(event.target.value);
+      zoomText.textContent = photoScale.toFixed(2) + 'x';
+      drawTwibbon();
+    });
+
+    resetTwibbonBtn.addEventListener('click', () => {
+      resetTwibbonState();
+    });
+
+    backToResultBtn.addEventListener('click', () => {
+      twibbonPage.classList.remove('show');
+      quizPage.classList.remove('hide');
+      quizPage.classList.add('show');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    downloadTwibbonBtn.addEventListener('click', () => {
+      if (!userPhoto) {
+        alert(quizText[currentLanguage].uploadFirstAlert);
+        return;
+      }
+
+      const link = document.createElement('a');
+      const resultName = resultData[currentResultKey].ENG.toLowerCase();
+      link.download = `scoop-teraphie-${resultName}-twibbon.png`;
+      link.href = twibbonCanvas.toDataURL('image/png');
+      link.click();
+    });
+
+    twibbonCanvas.addEventListener('mousedown', startPhotoDrag);
+    twibbonCanvas.addEventListener('mousemove', movePhotoDrag);
+    twibbonCanvas.addEventListener('mouseup', stopPhotoDrag);
+    twibbonCanvas.addEventListener('mouseleave', stopPhotoDrag);
+
+    twibbonCanvas.addEventListener('touchstart', startPhotoDrag);
+    twibbonCanvas.addEventListener('touchmove', movePhotoDrag, { passive: false });
+    twibbonCanvas.addEventListener('touchend', stopPhotoDrag);
+
+    showQuestion();
+    drawTwibbon();
+  </script>
+</body>
+</html>
