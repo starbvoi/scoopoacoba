@@ -824,6 +824,91 @@
     }
 
     /* =========================
+   USERNAME POPUP
+========================= */
+
+.username-popup {
+  position: fixed;
+  inset: 0;
+  z-index: 10001;
+  display: none;
+  place-items: center;
+  padding: 20px;
+  background: rgba(255, 217, 232, 0.92);
+}
+
+.username-popup.show {
+  display: grid;
+}
+
+.username-box {
+  width: min(420px, 94vw);
+  padding: 24px 20px;
+  background: rgba(221, 123, 149, 0.94);
+  box-shadow: 0 16px 25px rgba(171, 87, 111, 0.25);
+  text-align: center;
+  display: grid;
+  gap: 14px;
+}
+
+.username-title {
+  font-family: "Boogaloo", cursive;
+  font-size: 2.6rem;
+  color: var(--blue);
+  text-shadow:
+    2px 0 var(--blue-dark),
+    -2px 0 var(--blue-dark),
+    0 2px var(--blue-dark),
+    0 -2px var(--blue-dark);
+}
+
+.username-text {
+  color: #fffafc;
+  font-family: "Kalam", cursive;
+  font-weight: 700;
+  font-size: 1.35rem;
+  line-height: 1.35;
+}
+
+.username-input {
+  width: 100%;
+  min-height: 50px;
+  border: none;
+  outline: none;
+  padding: 0 16px;
+  background: rgba(255, 252, 229, 0.96);
+  color: #df7996;
+  font-family: "Fredoka", sans-serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.username-input::placeholder {
+  color: rgba(223, 121, 150, 0.65);
+}
+
+.username-error {
+  display: none;
+  color: #fffce5;
+  font-family: "Fredoka", sans-serif;
+  font-weight: 700;
+}
+
+.username-error.show {
+  display: block;
+}
+
+.username-submit {
+  width: 100%;
+  min-height: 52px;
+}
+
+.username-submit:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+    /* =========================
        RESPONSIVE
     ========================= */
 
@@ -1063,6 +1148,29 @@
     </div>
   </div>
 
+  <!-- USERNAME POPUP -->
+<div class="username-popup" id="usernamePopup">
+  <div class="username-box">
+    <h2 class="username-title">who are you?</h2>
+    <p class="username-text">isi dengan username mu</p>
+
+    <input
+      class="username-input"
+      id="usernameInput"
+      type="text"
+      placeholder="username kamu"
+      maxlength="24"
+      autocomplete="nickname"
+    />
+
+    <p class="username-error" id="usernameError">Username wajib diisi ya!</p>
+
+    <button class="twibbon-btn primary username-submit" id="usernameSubmitBtn" type="button">
+      continue
+    </button>
+  </div>
+</div>
+  
   <!-- LANDING -->
   <main class="site" id="siteContent">
     <section class="landing-wrap">
@@ -1106,7 +1214,7 @@
 
   <!-- TWIBBON -->
   <main class="twibbon-page" id="twibbonPage">
-    <h1 class="twibbon-title" id="twibbonTitle">Make Your Twibbon</h1>
+    <h1 class="twibbon-title" id="twibbonTitle">Make Your Invitation</h1>
     <p class="twibbon-subtitle" id="twibbonSubtitle">Upload your photo and create your flavor frame.</p>
 
     <section class="twibbon-layout">
@@ -1119,7 +1227,7 @@
       <aside class="twibbon-panel">
         <h2 id="twibbonPanelTitle">Your flavor frame</h2>
         <span class="twibbon-result-name" id="twibbonResultName">Vanilla</span>
-        <p id="twibbonHelpText">Upload your photo, drag to adjust, then download your twibbon.</p>
+        <p id="twibbonHelpText">Upload your photo, drag to adjust, then download your invitation.</p>
 
       <input id="photoInput" class="photo-input-real" type="file" accept="image/*" />
       
@@ -1140,19 +1248,36 @@
           <button class="twibbon-btn light" id="resetTwibbonBtn" type="button">reset</button>
         </div>
 
-        <button class="twibbon-btn primary" id="downloadTwibbonBtn" type="button">download twibbon</button>
+        <button class="twibbon-btn primary" id="downloadTwibbonBtn" type="button">download frame</button>
 
         <p class="twibbon-note" id="twibbonNote">Frame is selected automatically based on your quiz result.</p>
       </aside>
     </section>
   </main>
 
-  <script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+  const SUPABASE_URL = "https://jyfwwjzetvctjewkyqea.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_MryEEmpx7eKOE2wjPDPPPw_-1B5vePX";
+
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY
+);
     const pageLoader = document.getElementById("pageLoader");
     const siteContent = document.getElementById("siteContent");
     const startBtn = document.getElementById("startBtn");
     const quizPage = document.getElementById("quizPage");
     const bgMusic = document.getElementById("bgMusic");
+
+    const usernamePopup = document.getElementById("usernamePopup");
+    const usernameInput = document.getElementById("usernameInput");
+    const usernameSubmitBtn = document.getElementById("usernameSubmitBtn");
+    const usernameError = document.getElementById("usernameError");
+    
+    let currentUsername = localStorage.getItem("scoop_username") || "";
+    let currentUserRowId = localStorage.getItem("scoop_user_row_id") || "";
 
     const langButtons = document.querySelectorAll('.lang');
     const langButtonsWrapper = document.querySelector('.lang-buttons');
@@ -1229,17 +1354,17 @@
         next: 'next !',
         finish: 'finish !',
         tryAgain: 'try again',
-        download: 'make twibbon',
+        download: 'make invitation',
         alert: 'Please choose an answer first!',
-        twibbonTitle: 'Make Your Twibbon',
+        twibbonTitle: 'Make Your Invitation',
         twibbonSubtitle: 'Upload your photo and create your flavor frame.',
         twibbonPanelTitle: 'Your flavor frame',
-        twibbonHelpText: 'Upload your photo, drag to adjust, then download your twibbon.',
+        twibbonHelpText: 'Upload your photo, drag to adjust, then download your invitation.',
         uploadPhoto: 'upload photo',
         zoom: 'zoom photo',
         back: 'back',
         reset: 'reset',
-        downloadTwibbon: 'download twibbon',
+        downloadTwibbon: 'download invitation',
         note: 'Frame is selected automatically based on your quiz result.',
         uploadFirstAlert: 'Please upload your photo first!',
         questions: [
@@ -1279,17 +1404,17 @@
         next: 'lanjut !',
         finish: 'selesai !',
         tryAgain: 'coba lagi',
-        download: 'buat twibbon',
+        download: 'buat undangan',
         alert: 'Pilih jawaban dulu ya!',
-        twibbonTitle: 'Buat Twibbon Kamu',
+        twibbonTitle: 'Buat Undangan Kamu',
         twibbonSubtitle: 'Upload fotomu dan buat frame sesuai rasa kepribadianmu.',
         twibbonPanelTitle: 'Frame rasa kamu',
-        twibbonHelpText: 'Upload foto, geser untuk menyesuaikan posisi, lalu download twibbon kamu.',
+        twibbonHelpText: 'Upload foto, geser untuk menyesuaikan posisi, lalu download undangan kamu.',
         uploadPhoto: 'upload foto',
         zoom: 'zoom foto',
         back: 'kembali',
         reset: 'reset',
-        downloadTwibbon: 'download twibbon',
+        downloadTwibbon: 'download undangan',
         note: 'Frame dipilih otomatis sesuai hasil quiz kamu.',
         uploadFirstAlert: 'Upload fotomu dulu ya!',
         questions: [
@@ -1327,8 +1452,86 @@
 
 function hideLoader() {
   pageLoader.classList.add("hide");
+
+  if (currentUsername) {
+    siteContent.classList.add("show");
+  } else {
+    showUsernamePopup();
+  }
+}
+
+  function showUsernamePopup() {
+  usernamePopup.classList.add("show");
+
+  setTimeout(() => {
+    usernameInput.focus();
+  }, 200);
+}
+
+function hideUsernamePopup() {
+  usernamePopup.classList.remove("show");
   siteContent.classList.add("show");
 }
+
+function cleanUsername(value) {
+  return value.trim().replace(/\s+/g, " ").slice(0, 24);
+}
+
+async function saveUsernameToSupabase(username) {
+  const { data, error } = await supabaseClient
+    .from("scoop_users")
+    .insert([
+      {
+        username: username,
+        language: currentLanguage
+      }
+    ])
+    .select("id")
+    .single();
+
+  if (error) {
+    console.log("Gagal menyimpan username ke Supabase:", error);
+    return null;
+  }
+
+  return data;
+}
+
+async function submitUsername() {
+  const username = cleanUsername(usernameInput.value);
+
+  if (!username) {
+    usernameError.classList.add("show");
+    return;
+  }
+
+  usernameError.classList.remove("show");
+  usernameSubmitBtn.disabled = true;
+  usernameSubmitBtn.textContent = "saving...";
+
+  const savedUser = await saveUsernameToSupabase(username);
+
+  currentUsername = username;
+  localStorage.setItem("scoop_username", username);
+
+  if (savedUser && savedUser.id) {
+    currentUserRowId = savedUser.id;
+    localStorage.setItem("scoop_user_row_id", savedUser.id);
+  }
+
+  usernameSubmitBtn.disabled = false;
+  usernameSubmitBtn.textContent = "continue";
+
+  hideUsernamePopup();
+}
+
+usernameSubmitBtn.addEventListener("click", submitUsername);
+
+usernameInput.addEventListener("keydown", (event) => {
+  if (event.key === "Enter") {
+    submitUsername();
+  }
+});
 
 window.addEventListener("load", () => {
   setTimeout(hideLoader, 5200);
@@ -1409,10 +1612,31 @@ setTimeout(hideLoader, 7000);
       return highestAnswer;
     }
 
+    async function updateUserResultToSupabase() {
+  if (!currentUserRowId) return;
+
+  const result = resultData[currentResultKey];
+
+  const { error } = await supabaseClient
+    .from("scoop_users")
+    .update({
+      result_key: currentResultKey,
+      flavor: result.ENG,
+      language: currentLanguage
+    })
+    .eq("id", currentUserRowId);
+
+  if (error) {
+    console.log("Gagal update hasil quiz ke Supabase:", error);
+  }
+}
+
     function showResult() {
       currentResultKey = getFinalResult();
       const result = resultData[currentResultKey];
       const selectedQuiz = quizText[currentLanguage];
+
+      updateUserResultToSupabase();
 
       quizPage.classList.remove('hide');
       twibbonPage.classList.remove('show');
@@ -1509,7 +1733,9 @@ setTimeout(hideLoader, 7000);
       twibbonTitle.textContent = selectedQuiz.twibbonTitle;
       twibbonSubtitle.textContent = selectedQuiz.twibbonSubtitle;
       twibbonPanelTitle.textContent = selectedQuiz.twibbonPanelTitle;
-      twibbonResultName.textContent = result[currentLanguage];
+      twibbonResultName.textContent = currentUsername
+      ? `${currentUsername} • ${result[currentLanguage]}`
+      : result[currentLanguage];
       twibbonHelpText.textContent = selectedQuiz.twibbonHelpText;
       uploadPhotoBtn.textContent = selectedQuiz.uploadPhoto;
       zoomLabel.textContent = selectedQuiz.zoom;
@@ -1748,11 +1974,41 @@ function drawTwibbon() {
     twibbonCtx.restore();
   }
 
-  if (frameImage) {
-    twibbonCtx.drawImage(frameImage, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-  } else {
-    drawFallbackFrame();
+    if (frameImage) {
+      twibbonCtx.drawImage(frameImage, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+    } else {
+      drawFallbackFrame();
+    }
+    
+    drawUsernameOnInvitation();
+}
+  function drawUsernameOnInvitation() {
+  if (!currentUsername) return;
+
+  let displayUsername = currentUsername.startsWith("@")
+    ? currentUsername
+    : "@" + currentUsername;
+
+  twibbonCtx.save();
+  twibbonCtx.fillStyle = "#ffffff";
+  twibbonCtx.textAlign = "center";
+  twibbonCtx.textBaseline = "middle";
+
+  let fontSize = 56;
+  twibbonCtx.font = `${fontSize}px "Boogaloo", "Arial Narrow", sans-serif`;
+
+  const maxWidth = 260;
+
+  while (twibbonCtx.measureText(displayUsername).width > maxWidth && fontSize > 30) {
+    fontSize -= 2;
+    twibbonCtx.font = `${fontSize}px "Boogaloo", "Arial Narrow", sans-serif`;
   }
+
+  const textX = 920;
+  const textY = 1235;
+
+  twibbonCtx.fillText(displayUsername, textX, textY);
+  twibbonCtx.restore();
 }
     
     function getCanvasPoint(event) {
