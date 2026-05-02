@@ -726,8 +726,12 @@
       accent-color: var(--mint);
     }
 
-    #photoInput {
-      display: none;
+    .photo-input-real {
+      position: absolute;
+      left: -9999px;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
     }
 
     .twibbon-actions {
@@ -822,6 +826,42 @@
     /* =========================
        RESPONSIVE
     ========================= */
+
+    .save-image-fallback {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    display: grid;
+    place-items: center;
+    padding: 20px;
+    background: rgba(255, 217, 232, 0.92);
+  }
+  
+  .save-image-box {
+    width: min(420px, 94vw);
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 18px;
+    background: rgba(221, 123, 149, 0.9);
+    box-shadow: 0 16px 25px rgba(171, 87, 111, 0.25);
+    text-align: center;
+  }
+  
+  .save-image-text {
+    margin-bottom: 14px;
+    color: #fffafc;
+    font-family: "Fredoka", sans-serif;
+    font-weight: 700;
+    line-height: 1.4;
+  }
+  
+  .save-image-preview {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin: 0 auto 14px;
+    background: #fffce5;
+  }
 
     @media (max-width: 900px) {
       .landing-wrap {
@@ -1046,9 +1086,11 @@
         <span class="twibbon-result-name" id="twibbonResultName">Vanilla</span>
         <p id="twibbonHelpText">Upload your photo, drag to adjust, then download your twibbon.</p>
 
-        <input id="photoInput" type="file" accept="image/*" />
-
-        <button class="twibbon-btn primary" id="uploadPhotoBtn" type="button">upload photo</button>
+      <input id="photoInput" class="photo-input-real" type="file" accept="image/*" />
+      
+      <label class="twibbon-btn primary" id="uploadPhotoBtn" for="photoInput">
+        upload photo
+      </label>
 
         <div class="twibbon-field">
           <div class="twibbon-field-header">
@@ -1615,10 +1657,6 @@ function drawTwibbon() {
       lastDragPoint = null;
     }
 
-    uploadPhotoBtn.addEventListener('click', () => {
-      photoInput.click();
-    });
-
     photoInput.addEventListener('change', (event) => {
       loadPhotoFromFile(event.target.files[0]);
     });
@@ -1660,8 +1698,9 @@ downloadTwibbonBtn.addEventListener('click', () => {
     }
 
     const file = new File([blob], fileName, { type: 'image/png' });
+    const imageUrl = URL.createObjectURL(blob);
 
-    // 1. Cara terbaik untuk in-app browser / HP: buka share sheet
+    // 1. Coba share/save lewat fitur HP
     if (navigator.canShare && navigator.canShare({ files: [file] })) {
       try {
         await navigator.share({
@@ -1671,49 +1710,56 @@ downloadTwibbonBtn.addEventListener('click', () => {
         });
         return;
       } catch (error) {
-        console.log('Share dibatalkan atau gagal:', error);
+        console.log('Share gagal atau dibatalkan:', error);
       }
     }
 
-    // 2. Download normal untuk Chrome / Safari / desktop
-    const imageUrl = URL.createObjectURL(blob);
+    // 2. Coba download normal
     const link = document.createElement('a');
     link.href = imageUrl;
     link.download = fileName;
-    link.style.display = 'none';
-
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
 
-    // 3. Fallback untuk in-app browser yang blok download
-    setTimeout(() => {
-      const isInAppBrowser = /Instagram|FBAN|FBAV|Twitter|Line|Telegram|TikTok|MicroMessenger/i.test(navigator.userAgent);
-
-      if (isInAppBrowser) {
-        const newTab = window.open(imageUrl, '_blank');
-
-        if (!newTab) {
-          alert(
-            currentLanguage === 'INA'
-              ? 'Kalau tidak terdownload, buka website ini di Chrome/Safari lalu download lagi.'
-              : 'If it does not download, open this website in Chrome/Safari and try again.'
-          );
-        } else {
-          alert(
-            currentLanguage === 'INA'
-              ? 'Gambar dibuka di tab baru. Tekan lama gambar lalu pilih Save Image.'
-              : 'Image opened in a new tab. Long press the image and choose Save Image.'
-          );
-        }
-      }
-
-      setTimeout(() => {
-        URL.revokeObjectURL(imageUrl);
-      }, 15000);
-    }, 700);
+    // 3. Fallback untuk Twitter / Telegram in-app browser
+    showSaveImageFallback(imageUrl);
   }, 'image/png');
 });
+    function showSaveImageFallback(imageUrl) {
+  const oldPreview = document.querySelector('.save-image-fallback');
+
+  if (oldPreview) {
+    oldPreview.remove();
+  }
+
+  const wrapper = document.createElement('div');
+  wrapper.className = 'save-image-fallback';
+
+  wrapper.innerHTML = `
+    <div class="save-image-box">
+      <p class="save-image-text">
+        ${
+          currentLanguage === 'INA'
+            ? 'Kalau tidak terdownload otomatis, tekan lama gambar di bawah ini lalu pilih Save Image / Simpan Gambar.'
+            : 'If it does not download automatically, long press the image below and choose Save Image.'
+        }
+      </p>
+
+      <img class="save-image-preview" src="${imageUrl}" alt="Scoop Teraphie Twibbon Result">
+
+      <button class="twibbon-btn secondary close-save-preview" type="button">
+        ${currentLanguage === 'INA' ? 'tutup' : 'close'}
+      </button>
+    </div>
+  `;
+
+  document.body.appendChild(wrapper);
+
+  wrapper.querySelector('.close-save-preview').addEventListener('click', () => {
+    wrapper.remove();
+  });
+}
 
     twibbonCanvas.addEventListener('mousedown', startPhotoDrag);
     twibbonCanvas.addEventListener('mousemove', movePhotoDrag);
