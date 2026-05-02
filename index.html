@@ -827,6 +827,41 @@
        RESPONSIVE
     ========================= */
 
+      .open-browser-notice {
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      background: rgba(255, 217, 232, 0.92);
+    }
+    
+    .open-browser-box {
+      width: min(420px, 94vw);
+      padding: 20px;
+      background: rgba(221, 123, 149, 0.92);
+      box-shadow: 0 16px 25px rgba(171, 87, 111, 0.25);
+      text-align: center;
+      display: grid;
+      gap: 14px;
+    }
+    
+    .open-browser-text {
+      color: #fffafc;
+      font-family: "Fredoka", sans-serif;
+      font-weight: 700;
+      line-height: 1.4;
+    }
+    
+    .open-browser-btn {
+      width: 100%;
+    }
+    
+    .close-browser-notice {
+      width: 100%;
+    }
+
     .save-image-fallback {
     position: fixed;
     inset: 0;
@@ -1483,8 +1518,55 @@ setTimeout(hideLoader, 7000);
       downloadTwibbonBtn.textContent = selectedQuiz.downloadTwibbon;
       twibbonNote.textContent = selectedQuiz.note;
     }
+        function isInAppBrowser() {
+      return /Instagram|FBAN|FBAV|Twitter|Line|Telegram|TikTok|MicroMessenger/i.test(navigator.userAgent);
+    }
+    
+    function showOpenBrowserNotice() {
+      const oldNotice = document.querySelector('.open-browser-notice');
+    
+      if (oldNotice) {
+        oldNotice.remove();
+      }
+    
+      const currentUrl = window.location.href;
+    
+      const wrapper = document.createElement('div');
+      wrapper.className = 'open-browser-notice';
+    
+      wrapper.innerHTML = `
+        <div class="open-browser-box">
+          <p class="open-browser-text">
+            ${
+              currentLanguage === 'INA'
+                ? 'Upload foto biasanya tidak jalan di browser Twitter/Telegram. Buka halaman ini di Chrome atau Safari dulu ya.'
+                : 'Photo upload often does not work inside Twitter/Telegram browser. Please open this page in Chrome or Safari.'
+            }
+          </p>
+    
+          <a class="twibbon-btn primary open-browser-btn" href="${currentUrl}" target="_blank" rel="noopener noreferrer">
+            ${currentLanguage === 'INA' ? 'buka di browser' : 'open in browser'}
+          </a>
+    
+          <button class="twibbon-btn secondary close-browser-notice" type="button">
+            ${currentLanguage === 'INA' ? 'lanjut di sini' : 'continue here'}
+          </button>
+        </div>
+      `;
+    
+      document.body.appendChild(wrapper);
+    
+      wrapper.querySelector('.close-browser-notice').addEventListener('click', () => {
+        wrapper.remove();
+      });
+    }
 
     function openTwibbonPage() {
+      if (isInAppBrowser()) {
+        showOpenBrowserNotice();
+        return;
+      }
+    
       quizPage.classList.add('hide');
       twibbonPage.classList.add('show');
       updateTwibbonTexts();
