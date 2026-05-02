@@ -1276,8 +1276,8 @@ const supabaseClient = window.supabase.createClient(
     const usernameSubmitBtn = document.getElementById("usernameSubmitBtn");
     const usernameError = document.getElementById("usernameError");
     
-    let currentUsername = localStorage.getItem("scoop_username") || "";
-    let currentUserRowId = localStorage.getItem("scoop_user_row_id") || "";
+    let currentUsername = "";
+    let currentUserRowId = "";
 
     const langButtons = document.querySelectorAll('.lang');
     const langButtonsWrapper = document.querySelector('.lang-buttons');
@@ -1452,12 +1452,7 @@ const supabaseClient = window.supabase.createClient(
 
 function hideLoader() {
   pageLoader.classList.add("hide");
-
-  if (currentUsername) {
-    siteContent.classList.add("show");
-  } else {
-    showUsernamePopup();
-  }
+  showUsernamePopup();
 }
 
   function showUsernamePopup() {
@@ -1512,11 +1507,9 @@ async function submitUsername() {
   const savedUser = await saveUsernameToSupabase(username);
 
   currentUsername = username;
-  localStorage.setItem("scoop_username", username);
-
+  
   if (savedUser && savedUser.id) {
     currentUserRowId = savedUser.id;
-    localStorage.setItem("scoop_user_row_id", savedUser.id);
   }
 
   usernameSubmitBtn.disabled = false;
