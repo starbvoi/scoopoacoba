@@ -1561,19 +1561,69 @@ setTimeout(hideLoader, 7000);
       });
     }
 
-    function openTwibbonPage() {
-      if (isInAppBrowser()) {
-        showOpenBrowserNotice();
-        return;
-      }
-    
-      quizPage.classList.add('hide');
-      twibbonPage.classList.add('show');
-      updateTwibbonTexts();
-      loadSelectedFrame();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+function openTwibbonPage() {
+  showOpenBrowserNotice();
+}
+    function continueToTwibbonPage() {
+  const oldNotice = document.querySelector('.open-browser-notice');
 
+  if (oldNotice) {
+    oldNotice.remove();
+  }
+
+  quizPage.classList.add('hide');
+  twibbonPage.classList.add('show');
+  updateTwibbonTexts();
+  loadSelectedFrame();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function showOpenBrowserNotice() {
+  const oldNotice = document.querySelector('.open-browser-notice');
+
+  if (oldNotice) {
+    oldNotice.remove();
+  }
+
+  const currentUrl = window.location.href;
+
+  const wrapper = document.createElement('div');
+  wrapper.className = 'open-browser-notice';
+
+  wrapper.innerHTML = `
+    <div class="open-browser-box">
+      <p class="open-browser-text">
+        ${
+          currentLanguage === 'INA'
+            ? 'Kalau kamu buka dari Twitter/Telegram, upload foto dan download kadang tidak bisa jalan. Lebih aman buka di Chrome atau Safari dulu ya.'
+            : 'If you open this from Twitter/Telegram, photo upload and download may not work. It is safer to open it in Chrome or Safari first.'
+        }
+      </p>
+
+      <a class="twibbon-btn primary open-browser-btn" href="${currentUrl}" target="_blank" rel="noopener noreferrer">
+        ${currentLanguage === 'INA' ? 'buka di browser' : 'open in browser'}
+      </a>
+
+      <button class="twibbon-btn secondary continue-twibbon-btn" type="button">
+        ${currentLanguage === 'INA' ? 'lanjut di sini' : 'continue here'}
+      </button>
+
+      <button class="twibbon-btn light close-browser-notice" type="button">
+        ${currentLanguage === 'INA' ? 'tutup' : 'close'}
+      </button>
+    </div>
+  `;
+
+  document.body.appendChild(wrapper);
+
+  wrapper.querySelector('.continue-twibbon-btn').addEventListener('click', () => {
+    continueToTwibbonPage();
+  });
+
+  wrapper.querySelector('.close-browser-notice').addEventListener('click', () => {
+    wrapper.remove();
+  });
+}
     function resetTwibbonState() {
       photoScale = 1;
       photoX = 0;
