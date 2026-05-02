@@ -1248,12 +1248,17 @@
       }
     };
 
-    window.addEventListener("load", () => {
-      setTimeout(() => {
-        pageLoader.classList.add("hide");
-        siteContent.classList.add("show");
-      }, 5200);
-    });
+function hideLoader() {
+  pageLoader.classList.add("hide");
+  siteContent.classList.add("show");
+}
+
+window.addEventListener("load", () => {
+  setTimeout(hideLoader, 5200);
+});
+
+// Cadangan kalau browser aplikasi telat menjalankan event load
+setTimeout(hideLoader, 7000);
 
     startBtn.addEventListener("click", () => {
       siteContent.classList.add("hide");
@@ -1575,14 +1580,7 @@ function drawTwibbon() {
     drawFallbackFrame();
   }
 }
-
-      if (frameImage) {
-        twibbonCtx.drawImage(frameImage, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-      } else {
-        drawFallbackFrame();
-      }
-    }
-
+    
     function getCanvasPoint(event) {
       const rect = twibbonCanvas.getBoundingClientRect();
       const touch = event.touches && event.touches[0];
