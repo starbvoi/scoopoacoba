@@ -3,6 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="light">
+  <meta name="theme-color" content="#ffd9e8">
+  <meta name="supported-color-schemes" content="light">
   <title>Scoop Teraphie</title>
 
   <!-- Google Fonts -->
@@ -32,6 +35,26 @@
       --cream: #fffce5;
       --rose: #dd7b95;
     }
+    html {
+    color-scheme: light only;
+    background: #ffd9e8;
+  }
+  
+    body {
+    color-scheme: light only;
+    forced-color-adjust: none;
+    -webkit-text-size-adjust: 100%;
+    -webkit-font-smoothing: antialiased;
+    background-color: #ffd9e8;
+  }
+  
+  img,
+  canvas,
+  button,
+  input,
+  a {
+    forced-color-adjust: none;
+  }
 
     html,
     body {
@@ -1505,40 +1528,53 @@
       twibbonCtx.restore();
     }
 
-    function drawTwibbon() {
-      twibbonCtx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-      twibbonCtx.fillStyle = '#fffce5';
-      twibbonCtx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+function drawTwibbon() {
+  twibbonCtx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
-      if (userPhoto) {
-        const baseScale = Math.max(CANVAS_WIDTH / userPhoto.width, CANVAS_HEIGHT / userPhoto.height);
-        const drawWidth = userPhoto.width * baseScale * photoScale;
-        const drawHeight = userPhoto.height * baseScale * photoScale;
-        const drawX = (CANVAS_WIDTH - drawWidth) / 2 + photoX;
-        const drawY = (CANVAS_HEIGHT - drawHeight) / 2 + photoY;
+  // background solid supaya warna hasil download tidak berubah/transparan
+  twibbonCtx.save();
+  twibbonCtx.fillStyle = '#fffce5';
+  twibbonCtx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+  twibbonCtx.restore();
 
-        twibbonCtx.drawImage(userPhoto, drawX, drawY, drawWidth, drawHeight);
-      } else {
-        twibbonCtx.fillStyle = '#fffce5';
-        twibbonCtx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+  if (userPhoto) {
+    const baseScale = Math.max(CANVAS_WIDTH / userPhoto.width, CANVAS_HEIGHT / userPhoto.height);
+    const drawWidth = userPhoto.width * baseScale * photoScale;
+    const drawHeight = userPhoto.height * baseScale * photoScale;
+    const drawX = (CANVAS_WIDTH - drawWidth) / 2 + photoX;
+    const drawY = (CANVAS_HEIGHT - drawHeight) / 2 + photoY;
 
-        twibbonCtx.fillStyle = '#df7996';
-        twibbonCtx.font = 'bold 56px Fredoka, Arial, sans-serif';
-        twibbonCtx.textAlign = 'center';
-        twibbonCtx.fillText(
-          currentLanguage === 'INA' ? 'Upload fotomu' : 'Upload your photo',
-          CANVAS_WIDTH / 2,
-          CANVAS_HEIGHT / 2 - 18
-        );
+    twibbonCtx.drawImage(userPhoto, drawX, drawY, drawWidth, drawHeight);
+  } else {
+    twibbonCtx.save();
+    twibbonCtx.fillStyle = '#fffce5';
+    twibbonCtx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
-        twibbonCtx.fillStyle = '#9f6b4d';
-        twibbonCtx.font = '36px Kalam, Arial, sans-serif';
-        twibbonCtx.fillText(
-          currentLanguage === 'INA' ? 'lalu geser untuk menyesuaikan' : 'then drag to adjust',
-          CANVAS_WIDTH / 2,
-          CANVAS_HEIGHT / 2 + 44
-        );
-      }
+    twibbonCtx.fillStyle = '#df7996';
+    twibbonCtx.font = 'bold 56px Fredoka, Arial, sans-serif';
+    twibbonCtx.textAlign = 'center';
+    twibbonCtx.fillText(
+      currentLanguage === 'INA' ? 'Upload fotomu' : 'Upload your photo',
+      CANVAS_WIDTH / 2,
+      CANVAS_HEIGHT / 2 - 18
+    );
+
+    twibbonCtx.fillStyle = '#9f6b4d';
+    twibbonCtx.font = '36px Kalam, Arial, sans-serif';
+    twibbonCtx.fillText(
+      currentLanguage === 'INA' ? 'lalu geser untuk menyesuaikan' : 'then drag to adjust',
+      CANVAS_WIDTH / 2,
+      CANVAS_HEIGHT / 2 + 44
+    );
+    twibbonCtx.restore();
+  }
+
+  if (frameImage) {
+    twibbonCtx.drawImage(frameImage, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+  } else {
+    drawFallbackFrame();
+  }
+}
 
       if (frameImage) {
         twibbonCtx.drawImage(frameImage, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
@@ -1606,18 +1642,80 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
 
-    downloadTwibbonBtn.addEventListener('click', () => {
-      if (!userPhoto) {
-        alert(quizText[currentLanguage].uploadFirstAlert);
+downloadTwibbonBtn.addEventListener('click', () => {
+  if (!userPhoto) {
+    alert(quizText[currentLanguage].uploadFirstAlert);
+    return;
+  }
+
+  const resultName = resultData[currentResultKey].ENG.toLowerCase();
+  const fileName = `scoop-teraphie-${resultName}-twibbon.png`;
+
+  twibbonCanvas.toBlob(async (blob) => {
+    if (!blob) {
+      alert(
+        currentLanguage === 'INA'
+          ? 'Gagal membuat gambar. Coba buka lewat Chrome atau Safari.'
+          : 'Failed to create image. Try opening it in Chrome or Safari.'
+      );
+      return;
+    }
+
+    const file = new File([blob], fileName, { type: 'image/png' });
+
+    // 1. Cara terbaik untuk in-app browser / HP: buka share sheet
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      try {
+        await navigator.share({
+          files: [file],
+          title: 'Scoop Teraphie Twibbon',
+          text: 'My Scoop Teraphie result!'
+        });
         return;
+      } catch (error) {
+        console.log('Share dibatalkan atau gagal:', error);
+      }
+    }
+
+    // 2. Download normal untuk Chrome / Safari / desktop
+    const imageUrl = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = imageUrl;
+    link.download = fileName;
+    link.style.display = 'none';
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    // 3. Fallback untuk in-app browser yang blok download
+    setTimeout(() => {
+      const isInAppBrowser = /Instagram|FBAN|FBAV|Twitter|Line|Telegram|TikTok|MicroMessenger/i.test(navigator.userAgent);
+
+      if (isInAppBrowser) {
+        const newTab = window.open(imageUrl, '_blank');
+
+        if (!newTab) {
+          alert(
+            currentLanguage === 'INA'
+              ? 'Kalau tidak terdownload, buka website ini di Chrome/Safari lalu download lagi.'
+              : 'If it does not download, open this website in Chrome/Safari and try again.'
+          );
+        } else {
+          alert(
+            currentLanguage === 'INA'
+              ? 'Gambar dibuka di tab baru. Tekan lama gambar lalu pilih Save Image.'
+              : 'Image opened in a new tab. Long press the image and choose Save Image.'
+          );
+        }
       }
 
-      const link = document.createElement('a');
-      const resultName = resultData[currentResultKey].ENG.toLowerCase();
-      link.download = `scoop-teraphie-${resultName}-twibbon.png`;
-      link.href = twibbonCanvas.toDataURL('image/png');
-      link.click();
-    });
+      setTimeout(() => {
+        URL.revokeObjectURL(imageUrl);
+      }, 15000);
+    }, 700);
+  }, 'image/png');
+});
 
     twibbonCanvas.addEventListener('mousedown', startPhotoDrag);
     twibbonCanvas.addEventListener('mousemove', movePhotoDrag);
